@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Omkar Kumbhar — Video Editor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:wght@400;500;600&family=Caveat:wght@500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#15111A;
+    --surface:#1F1922;
+    --surface-2:#271F2B;
+    --ink:#F6EFE4;
+    --muted:#9C8F9A;
+    --line:#372E3D;
+    --gold:#F2B705;
+    --coral:#FF6F59;
+    --tape: rgba(246,239,228,0.85);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--ink);font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden;}
+  ::selection{background:var(--gold);color:var(--bg);}
+  h1,h2,h3,.display{font-family:'Fraunces',serif;font-weight:600;letter-spacing:-0.01em;}
+  .hand{font-family:'Caveat',cursive;}
+  .mono{font-family:'JetBrains Mono',monospace;letter-spacing:0.02em;}
+  a{color:inherit;text-decoration:none;}
+
+  /* ===== Nav ===== */
+  nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;justify-content:space-between;align-items:center;padding:20px 6vw;background:linear-gradient(180deg,rgba(21,17,26,0.92),rgba(21,17,26,0));backdrop-filter:blur(2px);}
+  nav .name{font-family:'Fraunces',serif;font-weight:600;font-size:19px;}
+  nav .links{display:flex;gap:26px;font-size:13px;color:var(--muted);}
+  nav .links a:hover{color:var(--gold);}
+  @media (max-width:700px){nav .links{display:none;}}
+
+  main{padding-top:0;}
+  section{padding:120px 8vw;border-bottom:1px solid var(--line);position:relative;}
+  .eyebrow{font-size:12px;color:var(--coral);text-transform:uppercase;font-weight:600;letter-spacing:0.08em;display:flex;align-items:center;gap:8px;margin-bottom:20px;}
+  .eyebrow::before{content:'';width:16px;height:1px;background:var(--coral);}
+
+  /* ===== Hero ===== */
+  #hero{min-height:100vh;display:flex;align-items:center;padding-top:140px;overflow:visible;}
+  .hero-grid{display:grid;grid-template-columns:1.15fr 0.85fr;gap:40px;align-items:center;width:100%;}
+  #hero .kicker{font-size:13px;color:var(--muted);margin-bottom:18px;}
+  #hero h1{font-size:clamp(46px,6.4vw,88px);line-height:1.02;font-weight:600;}
+  #hero h1 em{font-style:italic;color:var(--gold);font-weight:500;}
+  .scribble{width:220px;max-width:60%;margin:14px 0 22px;display:block;}
+  #hero .sub{font-size:17px;color:var(--muted);max-width:48ch;line-height:1.65;margin-bottom:36px;}
+  .actions{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:56px;}
+  .btn{padding:14px 26px;font-size:13px;font-weight:600;border-radius:999px;display:inline-flex;align-items:center;gap:10px;transition:transform 0.15s,background 0.15s,color 0.15s;}
+  .btn.primary{background:var(--gold);color:var(--bg);}
+  .btn.primary:hover{transform:translateY(-2px);}
+  .btn.ghost{border:1px solid var(--line);color:var(--ink);}
+  .btn.ghost:hover{border-color:var(--coral);color:var(--coral);}
+
+  .index-cards{display:flex;gap:14px;flex-wrap:wrap;}
+  .index{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:14px 18px;min-width:120px;}
+  .index .num{font-family:'Fraunces',serif;font-size:26px;color:var(--gold);}
+  .index .label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.04em;margin-top:2px;}
+
+  /* ===== Polaroid collage ===== */
+  .collage{position:relative;height:460px;}
+  .polaroid{position:absolute;background:var(--tape);padding:10px 10px 34px;border-radius:2px;box-shadow:0 18px 34px rgba(0,0,0,0.45);width:190px;}
+  .polaroid img{width:100%;aspect-ratio:16/10;object-fit:cover;display:block;background:#000;}
+  .polaroid .cap{position:absolute;bottom:8px;left:12px;right:12px;font-family:'Caveat',cursive;font-size:17px;color:#2b2530;}
+  .polaroid:nth-child(1){top:0;left:6%;transform:rotate(-7deg);z-index:3;}
+  .polaroid:nth-child(2){top:14%;right:4%;transform:rotate(6deg);width:170px;z-index:2;}
+  .polaroid:nth-child(3){bottom:6%;left:20%;transform:rotate(3deg);width:200px;z-index:4;}
+  .polaroid .tape{position:absolute;top:-10px;left:50%;transform:translateX(-50%) rotate(-2deg);width:60px;height:22px;background:rgba(242,183,5,0.55);}
+  @media (max-width:900px){
+    .hero-grid{grid-template-columns:1fr;}
+    .collage{height:340px;margin-top:20px;}
+    .polaroid{width:150px;}
+  }
+
+  /* ===== Long-form ===== */
+  section h2{font-size:clamp(30px,4.4vw,48px);margin-bottom:10px;}
+  .section-sub{font-size:14px;color:var(--muted);margin-bottom:52px;max-width:58ch;}
+
+  .lf-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:36px;}
+  @media (max-width:1000px){.lf-grid{grid-template-columns:repeat(2,1fr);}}
+  @media (max-width:620px){.lf-grid{grid-template-columns:1fr;}}
+  .lf-card{cursor:pointer;opacity:0;transform:translateY(14px);transition:opacity 0.4s ease,transform 0.4s ease;}
+  .lf-card.in{opacity:1;transform:translateY(0);}
+  .lf-card:nth-child(odd){transform:rotate(-0.6deg);}
+  .lf-card:nth-child(even){transform:rotate(0.6deg);}
+  .lf-card.in:nth-child(odd){transform:rotate(-0.6deg) translateY(0);}
+  .lf-card.in:nth-child(even){transform:rotate(0.6deg) translateY(0);}
+  .lf-card .frame{position:relative;aspect-ratio:16/9;background:#000;border:6px solid var(--surface);border-radius:3px;overflow:hidden;transition:border-color 0.2s,transform 0.2s;}
+  .lf-card:hover .frame{border-color:var(--gold);transform:translateY(-4px);}
+  .lf-card .frame img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0.82;}
+  .lf-card .frame::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 55%,rgba(0,0,0,0.55) 100%);}
+  .lf-card .play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:50px;height:50px;border-radius:50%;border:1px solid rgba(246,239,228,0.7);display:flex;align-items:center;justify-content:center;transition:background 0.2s,border-color 0.2s;}
+  .lf-card:hover .play{background:var(--gold);border-color:var(--gold);}
+  .lf-card .play svg{width:15px;height:15px;fill:var(--ink);margin-left:2px;}
+  .lf-card:hover .play svg{fill:var(--bg);}
+  .lf-card .tc{position:absolute;top:12px;left:12px;font-size:11px;color:var(--ink);background:rgba(0,0,0,0.5);padding:3px 7px;border-radius:2px;}
+  .lf-card .meta{padding:16px 4px 0;}
+  .lf-card .meta h3{font-size:19px;font-weight:600;margin-bottom:4px;}
+  .lf-card .meta p{font-size:12px;color:var(--muted);}
+
+  /* ===== Shorts — filmstrip ===== */
+  .filmstrip{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;padding:18px 0;}
+  @media (max-width:900px){.filmstrip{grid-template-columns:repeat(2,1fr);}}
+  @media (max-width:480px){.filmstrip{grid-template-columns:1fr 1fr;gap:12px;}}
+  .fs-item{cursor:pointer;background:var(--surface-2);padding:8px 8px 0;opacity:0;transform:translateY(14px);transition:opacity 0.4s ease,transform 0.4s ease;}
+  .fs-item.in{opacity:1;transform:translateY(0);}
+  .fs-sprockets{display:flex;justify-content:space-between;padding:0 6px 6px;}
+  .fs-sprockets span{width:8px;height:8px;border-radius:50%;background:var(--bg);}
+  .fs-item .thumb{position:relative;aspect-ratio:9/16;background:#000;overflow:hidden;}
+  .fs-item .thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0.8;transition:opacity 0.2s;}
+  .fs-item:hover .thumb img{opacity:1;}
+  .fs-item .thumb::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 55%,rgba(0,0,0,0.6) 100%);}
+  .fs-item .play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:38px;height:38px;border-radius:50%;border:1px solid rgba(246,239,228,0.7);display:flex;align-items:center;justify-content:center;transition:background 0.2s,border-color 0.2s;}
+  .fs-item:hover .play{background:var(--coral);border-color:var(--coral);}
+  .fs-item .play svg{width:12px;height:12px;fill:var(--ink);margin-left:1px;}
+  .fs-item:hover .play svg{fill:var(--bg);}
+  .fs-item .badge{position:absolute;top:8px;left:8px;font-size:10px;background:rgba(0,0,0,0.5);padding:3px 6px;border-radius:2px;text-transform:uppercase;}
+  .fs-item .label{padding:10px 4px 12px;font-family:'Caveat',cursive;font-size:18px;color:var(--muted);}
+
+  /* ===== Experience ===== */
+  .role{border-top:1px solid var(--line);padding:36px 0;display:grid;grid-template-columns:1fr;gap:14px;}
+  .role:last-child{border-bottom:1px solid var(--line);}
+  .role .when{font-family:'Caveat',cursive;font-size:20px;color:var(--gold);}
+  .role .place{font-size:13px;color:var(--muted);margin-top:2px;}
+  .role h3{font-size:24px;font-weight:600;margin:10px 0 12px;}
+  .role ul{padding-left:18px;color:var(--muted);font-size:14px;line-height:1.7;}
+  .role ul li{margin-bottom:4px;}
+
+  /* ===== Kit — sticky tags ===== */
+  .kit-cloud{display:flex;flex-wrap:wrap;gap:12px;}
+  .tag{background:var(--surface);border:1px solid var(--line);padding:10px 16px;border-radius:8px;font-size:13px;display:inline-block;}
+  .tag:nth-child(3n+1){transform:rotate(-1.5deg);}
+  .tag:nth-child(3n+2){transform:rotate(1deg);}
+  .tag:nth-child(3n){transform:rotate(-0.5deg);}
+  .kit-group{margin-bottom:36px;}
+  .kit-group h4{font-family:'Caveat',cursive;font-size:20px;color:var(--coral);margin-bottom:14px;}
+
+  /* ===== Awards & education ===== */
+  #creds .wrap{display:grid;grid-template-columns:1fr 1fr;gap:60px;}
+  .badge{display:inline-flex;align-items:center;gap:10px;background:rgba(242,183,5,0.12);border:1px solid var(--gold);color:var(--gold);padding:8px 16px;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.04em;border-radius:999px;margin-bottom:20px;}
+  #creds h3{font-size:19px;font-weight:600;margin-bottom:6px;}
+  #creds p{font-size:13px;color:var(--muted);margin-bottom:20px;}
+
+  /* ===== Contact ===== */
+  #contact{text-align:center;padding:150px 8vw;border-bottom:none;}
+  #contact .roll{font-family:'Caveat',cursive;font-size:20px;color:var(--muted);margin-bottom:6px;}
+  #contact h2{font-size:clamp(40px,8vw,96px);margin-bottom:36px;}
+  #contact .links{display:flex;justify-content:center;gap:28px;flex-wrap:wrap;font-size:14px;}
+  #contact .links a{padding-bottom:3px;border-bottom:1px solid var(--line);transition:border-color 0.2s,color 0.2s;}
+  #contact .links a:hover{border-color:var(--coral);color:var(--coral);}
+
+  footer{padding:22px 8vw;display:flex;justify-content:space-between;font-size:11px;color:var(--muted);}
+
+  [data-reveal]{opacity:0;transform:translateY(10px);transition:opacity 0.4s ease,transform 0.4s ease;}
+  [data-reveal].in{opacity:1;transform:translateY(0);}
+  :focus-visible{outline:2px solid var(--gold);outline-offset:2px;}
+
+  @media (max-width:900px){
+    #creds .wrap{grid-template-columns:1fr;}
+  }
+  @media (max-width:760px){
+    section{padding:80px 6vw;}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="name">Omkar Kumbhar</div>
+  <div class="links">
+    <a href="#longform">Work</a>
+    <a href="#shorts">Shorts</a>
+    <a href="#experience">About</a>
+    <a href="#contact">Contact</a>
+  </div>
+</nav>
+
+<main>
+
+  <section id="hero">
+    <div class="hero-grid">
+      <div>
+        <div class="kicker mono">PUNE, MAHARASHTRA — VIDEO EDITOR</div>
+        <h1>Cutting stories<br>that <em>hold</em> attention.</h1>
+        <svg class="scribble" viewBox="0 0 220 24" fill="none"><path d="M4 16C40 4 80 22 118 10C156 -2 190 18 216 8" stroke="#FF6F59" stroke-width="3" stroke-linecap="round"/></svg>
+        <p class="sub">I'm Omkar — I edit for Trakin Tech and freelance clients across tech, education, podcasting, and commercial work. Premiere Pro, sound design, colour, and motion graphics, all in service of the cut.</p>
+        <div class="actions">
+          <a href="#longform" class="btn primary">See the work</a>
+          <a href="#shorts" class="btn ghost">Shorts &amp; reels</a>
+        </div>
+        <div class="index-cards">
+          <div class="index"><div class="num">200+</div><div class="label">Videos edited</div></div>
+          <div class="index"><div class="num">500M+</div><div class="label">Views</div></div>
+          <div class="index"><div class="num">2M+</div><div class="label">Subscribers</div></div>
+          <div class="index"><div class="num">22%</div><div class="label">Shorts lift</div></div>
+        </div>
+      </div>
+      <div class="collage">
+        <div class="polaroid"><div class="tape"></div><img src="https://img.youtube.com/vi/6AQsuAIa3Qs/hqdefault.jpg" alt=""><div class="cap">edit 01</div></div>
+        <div class="polaroid"><div class="tape"></div><img src="https://img.youtube.com/vi/3KH5yF6AmuI/hqdefault.jpg" alt=""><div class="cap">edit 03</div></div>
+        <div class="polaroid"><div class="tape"></div><img src="https://img.youtube.com/vi/CSyrLTp4TAk/hqdefault.jpg" alt=""><div class="cap">edit 05</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="longform">
+    <div class="eyebrow">LONG-FORM EDITS</div>
+    <h2>Reviews, promos &amp; explainers.</h2>
+    <p class="section-sub" data-reveal>Full-length YouTube edits — tech reviews and explainer content cut for pacing, clarity, and audience retention.</p>
+    <div class="lf-grid" id="longform-grid"></div>
+  </section>
+
+  <section id="shorts">
+    <div class="eyebrow">SHORTS &amp; REELS</div>
+    <h2>Vertical cuts, built to hook fast.</h2>
+    <p class="section-sub" data-reveal>Short-form edits for YouTube Shorts and Instagram — tighter pacing, faster hooks, sized for the scroll.</p>
+    <div class="filmstrip" id="shorts-strip"></div>
+  </section>
+
+  <section id="experience">
+    <div class="eyebrow">EXPERIENCE</div>
+    <h2 data-reveal>On the job.</h2>
+    <div class="roles">
+      <div class="role" data-reveal>
+        <div class="when">Jan 2025 — Present</div>
+        <div class="place">Trakin Tech · Baner, Pune</div>
+        <h3>Video Editor</h3>
+        <ul>
+          <li>Edited 200+ videos across reviews, promos, Shorts, and explainers for Trakin Tech English &amp; Tamil</li>
+          <li>Contributed to 500M+ views and 2M+ subscribers on YouTube</li>
+          <li>Built an analytics dashboard to guide content strategy based on engagement</li>
+          <li>Led a motion graphics rebrand, boosting Shorts engagement by 22%</li>
+          <li>Edits across Hindi, English, Marathi, and Tamil for cultural relevance</li>
+        </ul>
+      </div>
+      <div class="role" data-reveal>
+        <div class="when">Mar 2023 — Present</div>
+        <div class="place">Freelance · Remote</div>
+        <h3>Freelance Video Editor</h3>
+        <ul>
+          <li>Full-cycle editing for clients across tech, education, podcasting, and commercial sectors</li>
+          <li>Platform-optimized content, motion graphics, and storytelling formats</li>
+          <li>Streamlined delivery with documentation and export presets</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="kit">
+    <div class="eyebrow">KIT</div>
+    <h2 data-reveal>Tools of the edit.</h2>
+    <div class="kit-group" data-reveal>
+      <h4>Editing &amp; post</h4>
+      <div class="kit-cloud">
+        <span class="tag">Adobe Premiere Pro</span><span class="tag">Video &amp; Audio Editing</span><span class="tag">Colour Correction</span><span class="tag">Sound Design &amp; Syncing</span><span class="tag">Visual Effects</span><span class="tag">Multi-cam Editing</span>
+      </div>
+    </div>
+    <div class="kit-group" data-reveal>
+      <h4>Design &amp; graphics</h4>
+      <div class="kit-cloud">
+        <span class="tag">Adobe Photoshop</span><span class="tag">Adobe Illustrator</span><span class="tag">Creative Cloud</span><span class="tag">Canva AI</span><span class="tag">Freepik / Pixelcut</span>
+      </div>
+    </div>
+    <div class="kit-group" data-reveal>
+      <h4>AI-assisted workflow</h4>
+      <div class="kit-cloud">
+        <span class="tag">Adobe Firefly</span><span class="tag">Runway ML / Veo 3</span><span class="tag">ElevenLabs / Adobe Podcast</span><span class="tag">Leonardo AI</span><span class="tag">ChatGPT / Perplexity</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="creds">
+    <div class="eyebrow">RECOGNITION &amp; EDUCATION</div>
+    <div class="wrap">
+      <div data-reveal>
+        <div class="badge">Editor of the Month</div>
+        <h3>Trakin Tech</h3>
+        <p>Recognized as "Editor of the Month" multiple times.</p>
+      </div>
+      <div data-reveal>
+        <h3>Diploma in Computer Animation</h3>
+        <p>Srajan College of Design, Pune University — Jul 2021 – Aug 2023</p>
+        <h3>12th, Arts</h3>
+        <p>Model Multipurpose High School &amp; Junior College, Akluj — 2024</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact">
+    <div class="roll">directed by you, edited by —</div>
+    <h2>Omkar Kumbhar</h2>
+    <div class="links">
+      <a href="mailto:omkar.dk1406@gmail.com">omkar.dk1406@gmail.com</a>
+      <a href="tel:+919422138334">+91 94221 38334</a>
+      <span class="mono" style="color:var(--muted);border:none;padding-bottom:0;">Pune, Maharashtra</span>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <span class="mono">© 2026 OMKAR KUMBHAR</span>
+  <span class="mono">EDIT · GRADE · DELIVER</span>
+</footer>
+
+<script>
+  // ---- Long-form YouTube edits ----
+  const longform = [
+    {tc:"00:03:10", id:"6AQsuAIa3Qs", title:"Long-Form Edit 01", meta:"YouTube · Full edit"},
+    {tc:"00:08:22", id:"PrKQEHeKM6Q", title:"Long-Form Edit 02", meta:"YouTube · Full edit"},
+    {tc:"00:14:05", id:"3KH5yF6AmuI", title:"Long-Form Edit 03", meta:"YouTube · Full edit"},
+    {tc:"00:19:17", id:"E31Im9QH9dk", title:"Long-Form Edit 04", meta:"YouTube · Full edit"},
+    {tc:"00:24:02", id:"CSyrLTp4TAk", title:"Long-Form Edit 05", meta:"YouTube · Full edit"},
+    {tc:"00:29:14", id:"N70o6L8u4PM", title:"Long-Form Edit 06", meta:"YouTube · Full edit"}
+  ];
+
+  const lfGrid = document.getElementById('longform-grid');
+  longform.forEach(p=>{
+    const card = document.createElement('div');
+    card.className = 'lf-card';
+    card.innerHTML = `
+      <div class="frame">
+        <img src="https://img.youtube.com/vi/${p.id}/hqdefault.jpg" alt="">
+        <span class="tc mono">${p.tc}</span>
+        <div class="play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+      </div>
+      <div class="meta"><h3>${p.title}</h3><p>${p.meta}</p></div>
+    `;
+    card.addEventListener('click', ()=>{
+      window.open(`https://www.youtube.com/watch?v=${p.id}`, '_blank');
+    });
+    lfGrid.appendChild(card);
+  });
+
+  // ---- Shorts & Reels ----
+  const shorts = [
+    {id:"SxpL-KX9BXo", platform:"youtube", label:"short 01"},
+    {id:"Mg8EJpN4YeY", platform:"youtube", label:"short 02"},
+    {id:"dhpVWdZJOaU", platform:"youtube", label:"short 03"},
+    {id:"pdlZ83aZ_HI", platform:"youtube", label:"short 04"},
+    {id:"XXJ2_vDrs9Y", platform:"youtube", label:"short 05"},
+    {id:"Qd7B676ZqLk", platform:"youtube", label:"short 06"},
+    {id:"DZfEQBvzO3u", platform:"instagram", label:"reel 01"},
+    {id:"DYCfZzgMheS", platform:"instagram", label:"reel 02"}
+  ];
+
+  const strip = document.getElementById('shorts-strip');
+  shorts.forEach(p=>{
+    const item = document.createElement('div');
+    item.className = 'fs-item';
+    const thumbHtml = p.platform === 'youtube'
+      ? `<img src="https://img.youtube.com/vi/${p.id}/hqdefault.jpg" alt="">`
+      : ``;
+    item.innerHTML = `
+      <div class="fs-sprockets"><span></span><span></span><span></span><span></span><span></span></div>
+      <div class="thumb">
+        ${thumbHtml}
+        <span class="badge">${p.platform === 'youtube' ? 'YouTube' : 'Instagram'}</span>
+        <div class="play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+      </div>
+      <div class="fs-sprockets"><span></span><span></span><span></span><span></span><span></span></div>
+      <div class="label">${p.label}</div>
+    `;
+    item.addEventListener('click', ()=>{
+      const url = p.platform === 'youtube'
+        ? `https://www.youtube.com/shorts/${p.id}`
+        : `https://www.instagram.com/reel/${p.id}/`;
+      window.open(url, '_blank');
+    });
+    strip.appendChild(item);
+  });
+
+  // ---- Reveal on scroll ----
+  const revealEls = document.querySelectorAll('[data-reveal], .lf-card, .fs-item');
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+    });
+  }, {threshold:0.1});
+  revealEls.forEach(el=>io.observe(el));
+</script>
+
+</body>
+</html>
